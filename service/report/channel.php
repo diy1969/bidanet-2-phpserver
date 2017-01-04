@@ -6,8 +6,8 @@ include_once __DIR__ . '/../common/header.php';
 date_default_timezone_set('PRC');
 
 $channelId = (isset($_GET['channel']) && $_GET['channel'] != -1) ? $_GET['channel'] : null;
-$timeStart = isset($_GET['start-time']) ? $_GET['start-time'] : time() * 1000;
-$timeEnd = isset($_GET['end-time']) ? $_GET['end-time'] : strtotime('+1 month') * 1000;
+$timeStart = isset($_GET['start-time']) ? $_GET['start-time'] : strtotime('-1 day') * 1000;
+$timeEnd = isset($_GET['end-time']) ? $_GET['end-time'] : time() * 1000;
 $timeStart = getDay0Time($timeStart);
 $timeEnd = getDay24Time($timeEnd);
 
@@ -31,7 +31,7 @@ function getChannelWays($db, $companyId, $channelId = null)
         return $db->query("SELECT a.`name` as qd, a.uuid as qd_uuid, b.`name` as fs, b.uuid as fs_uuid from bus_channel a INNER JOIN bus_channel_way b ON a.uuid = b.channel_id WHERE a.company_id = :id  ORDER BY a.create_time ASC",
             array('id' => $companyId)
         );
-    }else{
+    } else {
         return $db->query("SELECT a.`name` as qd, a.uuid as qd_uuid, b.`name` as fs, b.uuid as fs_uuid from bus_channel a INNER JOIN bus_channel_way b ON a.uuid = b.channel_id WHERE a.company_id = :id AND a.uuid = :channelId ORDER BY a.create_time ASC",
             array('id' => $companyId, 'channelId' => $channelId)
         );
@@ -41,41 +41,11 @@ function getChannelWays($db, $companyId, $channelId = null)
 // 投入
 function getTr($db, $channelId, $timeStart, $timeEnd)
 {
-    $timeStart = $timeStart / 1000;
-    $timeEnd = $timeEnd / 1000;
-    $startYear = date('Y', $timeStart);
-    $endYear = date('Y', $timeEnd);
-    $tr = 0;
-    if ($startYear != $endYear) {
-        for ($i = $startYear; $i <= $endYear; $i++) {
-            $yearField = $i;
-            if ($i == $startYear) {
-                $startMonth = date('n', $timeStart);
-            } else {
-                $startMonth = 1;
-            }
-            if ($i == $endYear) {
-                $endMonth = date('n', $timeEnd);
-            } else {
-                $endMonth = 12;
-            }
-            $startMonth -= 1;
-            $endMonth += 1;
-            $singleTr = $db->single("SELECT SUM(a.cost) as tr from monthly_target a WHERE a.channel_id = :id AND a.month_field BETWEEN :startMonth AND :endMonth AND a.year_field = :yearField",
-                array('id' => $channelId, 'startMonth' => $startMonth, 'endMonth' => $endMonth, 'yearField' => $yearField)
-            );
-            $tr += $singleTr ? $singleTr : 0;
-        }
-    } else {
-        $yearField = $startYear;
-        $startMonth = date('n', $timeStart);
-        $endMonth = date('n', $timeEnd);
-        $singleTr = $db->single("SELECT SUM(a.cost) as tr from monthly_target a WHERE a.channel_id = :id AND a.month_field BETWEEN :startMonth AND :endMonth AND a.year_field = :yearField",
-            array('id' => $channelId, 'startMonth' => $startMonth, 'endMonth' => $endMonth, 'yearField' => $yearField)
-        );
-        $tr += $singleTr ? $singleTr : 0;
-    }
-    return $tr;
+
+    $tr = $db->single("SELECT SUM(a.cost) as tr from channel_push a WHERE a.channel_id = :id AND a.create_time BETWEEN :timeStart AND :timeEnd",
+        array('id' => $channelId, 'timeStart' => $timeStart, 'timeEnd' => $timeEnd)
+    );
+    return $tr ? $tr : 0;
 }
 
 // 客资数
@@ -126,10 +96,10 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
             <label>起止日期</label>
             <div class="input-daterange input-group" id="datepicker">
                 <input type="text" class="picker form-control" data-target="start-time"
-                       value="<?= date('Y年m月', $timeStart / 1000) ?>">
+                       value="<?= date('Y年m月d日', $timeStart / 1000) ?>">
                 <span class="input-group-addon">to</span>
                 <input type="text" class="picker form-control" data-target="end-time"
-                       value="<?= date('Y年m月', $timeEnd / 1000) ?>">
+                       value="<?= date('Y年m月d日', $timeEnd / 1000) ?>">
             </div>
             <input type="hidden" name="start-time" value="<?= $timeStart ?>">
             <input type="hidden" name="end-time" value="<?= $timeEnd ?>">
@@ -152,8 +122,8 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
         $('.input-daterange').datepicker({
             autoclose: true,
             language: 'zh-CN',
-            minViewMode: 'months',
-            format: 'yyyy年mm月'
+            minViewMode: 'days',
+            format: 'yyyy年mm月dd日'
         });
         $('.input-daterange .picker').on('changeDate', function (e) {
             //console.log($(this).data('target'));
