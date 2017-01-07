@@ -18,10 +18,18 @@ function getWorkGroups($db, $companyId)
     );
 }
 
-// 接收客资数
-function getJskzs($db, $userId, $timeStart, $timeEnd)
+// 未报备客资数
+function getWbbkzs($db, $userId, $timeStart, $timeEnd)
 {
-    return $db->single("SELECT COUNT(a.id) as jskzs FROM bus_customer a WHERE a.customer_user_status != 4 AND a.valid_flag != 2 AND a.invite_id = :id AND a.yycreate_time BETWEEN :timeStart AND :timeEnd",
+    return $db->single("SELECT COUNT(a.id) as wbbkzs FROM bus_customer a WHERE a.customer_user_status = 2 AND a.invite_id = :id AND a.yycreate_time BETWEEN :timeStart AND :timeEnd",
+        array('id' => $userId, 'timeStart' => $timeStart, 'timeEnd' => $timeEnd)
+    );
+}
+
+// 有效客资数
+function getYxkzs($db, $userId, $timeStart, $timeEnd)
+{
+    return $db->single("SELECT COUNT(a.id) as yxkzs FROM bus_customer a WHERE a.customer_user_status NOT IN(2, 4) AND a.valid_flag != 2 AND a.invite_id = :id AND a.yycreate_time BETWEEN :timeStart AND :timeEnd",
         array('id' => $userId, 'timeStart' => $timeStart, 'timeEnd' => $timeEnd)
     );
 }
@@ -79,13 +87,15 @@ $groups = getWorkGroups($db, $companyId);
         <tr class="bg-primary">
             <th>组</th>
             <th>人名</th>
-            <th>接收客资数</th>
+            <th>未报备客资数</th>
+            <th>有效客资数</th>
             <th>邀约到店数</th>
             <th>成交数</th>
             <th>到店率</th>
         </tr>
         <?php
-        $jskzsSum = 0;
+        $wbbkzsSum = 0;
+        $yxkzsSum = 0;
         $yyddsSum = 0;
         $cjsSum = 0;
         ?>
@@ -93,23 +103,26 @@ $groups = getWorkGroups($db, $companyId);
             <tr>
                 <td class="rowspan v-center h-center" data-name="<?= $group['zu'] ?>"><?= $group['zu'] ?></td>
                 <td><?= $group['rm'] ?></td>
-                <td><?= $jskzs = getJskzs($db, $group['rm_uuid'], $timeStart, $timeEnd) ?></td>
+                <td><?= $wbbkzs = getWbbkzs($db, $group['rm_uuid'], $timeStart, $timeEnd) ?></td>
+                <td><?= $yxkzs = getYxkzs($db, $group['rm_uuid'], $timeStart, $timeEnd) ?></td>
                 <td><?= $yydds = getYydds($db, $group['rm_uuid'], $timeStart, $timeEnd) ?></td>
                 <td><?= $cjs = getCjs($db, $group['rm_uuid'], $timeStart, $timeEnd) ?></td>
-                <td><?= calculatePercent($yydds, $jskzs) ?></td>
+                <td><?= calculatePercent($yydds, $yxkzs) ?></td>
             </tr>
             <?php
-            $jskzsSum += $jskzs;
+            $wbbkzsSum += $wbbkzs;
+            $yxkzsSum += $yxkzs;
             $yyddsSum += $yydds;
             $cjsSum += $cjs;
             ?>
         <?php endforeach; ?>
         <tr>
             <td colspan="2" class="v-center h-center">合计</td>
-            <td><?= $jskzsSum ?></td>
+            <td><?= $wbbkzsSum ?></td>
+            <td><?= $yxkzsSum ?></td>
             <td><?= $yyddsSum ?></td>
             <td><?= $cjsSum ?></td>
-            <td><?= calculatePercent($yyddsSum, $jskzsSum) ?></td>
+            <td><?= calculatePercent($yyddsSum, $yxkzsSum) ?></td>
         </tr>
     </table>
 <?php

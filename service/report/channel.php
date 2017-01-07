@@ -41,7 +41,7 @@ function getChannelWays($db, $companyId, $channelId = null)
 // 投入
 function getTr($db, $channelId, $timeStart, $timeEnd)
 {
-
+    return 100;
     $tr = $db->single("SELECT SUM(a.cost) as tr from channel_push a WHERE a.channel_id = :id AND a.create_time BETWEEN :timeStart AND :timeEnd",
         array('id' => $channelId, 'timeStart' => $timeStart, 'timeEnd' => $timeEnd)
     );
@@ -150,6 +150,15 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
             <th>到店成交率</th>
             <th>有效客资成交率</th>
         </tr>
+        <?php
+        $trSum = 0;
+        $kzsSum = 0;
+        $yxkzsSum = 0;
+        $ddsSum = 0;
+        $cjsSum = 0;
+        $cjjeSum = 0;
+        $currentQdUuid = null;
+        ?>
         <?php foreach ($channelWays as $key => $channelWay): ?>
             <tr>
                 <td class="rowspan v-center h-center" data-name="<?= $channelWay['qd'] ?>"><?= $channelWay['qd'] ?></td>
@@ -168,7 +177,35 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
                 <td><?= calculatePercent($cjs, $dds) ?></td>
                 <td><?= calculatePercent($cjs, $yxkzs) ?></td>
             </tr>
+            <?php
+            // 成本总计渠道投入的
+            if($currentQdUuid != $channelWay['qd_uuid']){
+                $currentQdUuid = $channelWay['qd_uuid'];
+                $trSum += $tr;
+            }
+            $kzsSum += $kzs;
+            $yxkzsSum += $yxkzs;
+            $ddsSum += $dds;
+            $cjsSum += $cjs;
+            $cjjeSum += $cjje;
+            ?>
         <?php endforeach; ?>
+        <tr>
+            <td colspan="2" class="v-center h-center">合计</td>
+            <td><?= $trSum ?></td>
+            <td><?= $kzsSum ?></td>
+            <td><?= $yxkzsSum ?></td>
+            <td><?= $ddsSum ?></td>
+            <td><?= $cjsSum ?></td>
+            <td><?= $cjjeSum ?></td>
+            <td><?= calculateSingleCB($yxkzsSum, $trSum) ?></td>
+            <td><?= calculateSingleCB($ddsSum, $trSum) ?></td>
+            <td><?= calculateSingleCB($cjsSum, $trSum) ?></td>
+            <td><?= calculatePercent($yxkzsSum, $kzsSum) ?></td>
+            <td><?= calculatePercent($ddsSum, $yxkzsSum) ?></td>
+            <td><?= calculatePercent($cjsSum, $ddsSum) ?></td>
+            <td><?= calculatePercent($cjsSum, $yxkzsSum) ?></td>
+        </tr>
     </table>
 <?php
 include_once __DIR__ . '/../common/footer.php';
