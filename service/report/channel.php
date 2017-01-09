@@ -41,7 +41,6 @@ function getChannelWays($db, $companyId, $channelId = null)
 // 投入
 function getTr($db, $channelId, $timeStart, $timeEnd)
 {
-    return 100;
     $tr = $db->single("SELECT SUM(a.cost) as tr from channel_push a WHERE a.channel_id = :id AND a.create_time BETWEEN :timeStart AND :timeEnd",
         array('id' => $channelId, 'timeStart' => $timeStart, 'timeEnd' => $timeEnd)
     );
