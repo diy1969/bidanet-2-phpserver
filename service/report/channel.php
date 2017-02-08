@@ -109,7 +109,7 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
                 <option value="-1">全部</option>
                 <?php $channelOptions = getChannelOptions($db, $companyId);
                 foreach ($channelOptions as $value => $label): ?>
-                    <option value="<?= $value ?>"><?= $label ?></option>
+                    <option value="<?= $value ?>" <?=$value==$channelId?'selected':''?>><?= $label ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
