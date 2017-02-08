@@ -31,9 +31,9 @@ function getCjs($db, $userId, $timeStart, $timeEnd)
 }
 
 // 目标
-function getTarget($db, $userId, $timeFlag, $timeStart, $timeEnd){
-    $result = $db->row("SELECT a.record_valid_customer as yxkzs, a.invite_shop_customer as yydds, a.network_deal_customer as yyddl, a.deal_order_total as cjs FROM invite_report a WHERE a.creator_id = :id AND a.time_flag = :timeFlag AND a.create_time BETWEEN :timeStart AND :timeEnd ORDER BY a.create_time DESC limit 1",
-        array('id' => $userId, 'timeFlag' => $timeFlag, 'timeStart' => $timeStart, 'timeEnd' => $timeEnd)
+function getTarget($db, $userId, $timeFlag){
+    $result = $db->row("SELECT a.record_valid_customer as yxkzs, a.invite_shop_customer as yydds, a.network_deal_customer as yyddl, a.deal_order_total as cjs FROM invite_report a WHERE a.creator_id = :id AND a.time_flag = :timeFlag ORDER BY a.create_time DESC limit 1",
+        array('id' => $userId, 'timeFlag' => $timeFlag)
     );
     return $result ? $result : [
         'yxkzs' => 0,
@@ -47,7 +47,7 @@ $yxkzs = getYxkzs($db, $uuid, $timeStart, $timeEnd);
 $yydds = getYydds($db, $uuid, $timeStart, $timeEnd);
 $cjs = getCjs($db, $uuid, $timeStart, $timeEnd);
 
-$target = getTarget($db, $uuid, $timeFlag, $timeStart, $timeEnd);
+$target = getTarget($db, $uuid, $timeFlag);
 echo json_encode([
     'actualResult' => [
         'yxkzs' => $yxkzs,
