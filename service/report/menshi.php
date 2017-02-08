@@ -84,7 +84,8 @@ $groups = getWorkGroups($db, $companyId);
         });
     </script>
 
-    <table class="table table-bordered table-responsive">
+    <table class="table table-bordered table-responsive pinned">
+        <thead>
         <tr class="bg-primary">
             <th>组</th>
             <th>人名</th>
@@ -95,6 +96,8 @@ $groups = getWorkGroups($db, $companyId);
             <th>成交率</th>
             <th>均价</th>
         </tr>
+        </thead>
+        <tbody>
         <?php
         $jskzsSum = 0;
         $sjddsSum = 0;
@@ -128,6 +131,7 @@ $groups = getWorkGroups($db, $companyId);
             <td><?= calculatePercent($cjsSum, $jskzsSum) ?></td>
             <td><?= calculateSingleCB($cjsSum, $cjjeSum) ?></td>
         </tr>
+        </tbody>
     </table>
 <?php
 include_once __DIR__ . '/../common/footer.php';

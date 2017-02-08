@@ -84,6 +84,7 @@ $groups = getWorkGroups($db, $companyId);
     </script>
 
     <table class="table table-bordered table-responsive">
+        <thead>
         <tr class="bg-primary">
             <th>组</th>
             <th>人名</th>
@@ -93,6 +94,8 @@ $groups = getWorkGroups($db, $companyId);
             <th>成交数</th>
             <th>到店率</th>
         </tr>
+        </thead>
+        <tbody>
         <?php
         $wbbkzsSum = 0;
         $yxkzsSum = 0;
@@ -124,6 +127,7 @@ $groups = getWorkGroups($db, $companyId);
             <td><?= $cjsSum ?></td>
             <td><?= calculatePercent($yyddsSum, $yxkzsSum) ?></td>
         </tr>
+        </tbody>
     </table>
 <?php
 include_once __DIR__ . '/../common/footer.php';

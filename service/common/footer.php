@@ -16,6 +16,9 @@
                 elem.eq(i).remove();
             }
         });
+
+        // 定住元素
+        $(".pinned").freezeHeader();
     });
 </script>
 </div>

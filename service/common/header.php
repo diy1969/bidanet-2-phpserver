@@ -80,6 +80,7 @@ function getDay24Time($timestamp, $isMsec = true){
     <script src="../js/jquery-1.11.1.js"></script>
     <script src="../js/bootstrap-datepicker.min.js"></script>
     <script src="../js/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="../js/jquery.freezeheader.js"></script>
     <style>
         .v-center {
             vertical-align: middle !important;

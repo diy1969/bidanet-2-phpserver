@@ -131,8 +131,9 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
         });
     </script>
 
-    <table class="table table-bordered table-responsive">
-        <tr class="bg-primary">
+    <table class="table table-bordered table-responsive pinned">
+        <thead>
+        <tr class="bg-primary ">
             <th>渠道</th>
             <th>方式</th>
             <th>投入</th>
@@ -149,6 +150,8 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
             <th>到店成交率</th>
             <th>有效客资成交率</th>
         </tr>
+        </thead>
+        <tbody>
         <?php
         $trSum = 0;
         $kzsSum = 0;
@@ -178,7 +181,7 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
             </tr>
             <?php
             // 成本总计渠道投入的
-            if($currentQdUuid != $channelWay['qd_uuid']){
+            if ($currentQdUuid != $channelWay['qd_uuid']) {
                 $currentQdUuid = $channelWay['qd_uuid'];
                 $trSum += $tr;
             }
@@ -205,6 +208,7 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
             <td><?= calculatePercent($cjsSum, $ddsSum) ?></td>
             <td><?= calculatePercent($cjsSum, $yxkzsSum) ?></td>
         </tr>
+        </tbody>
     </table>
 <?php
 include_once __DIR__ . '/../common/footer.php';
