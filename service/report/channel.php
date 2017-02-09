@@ -39,10 +39,10 @@ function getChannelWays($db, $companyId, $channelId = null)
 }
 
 // 投入
-function getTr($db, $channelId, $timeStart, $timeEnd)
+function getTr($db, $channelWayId, $timeStart, $timeEnd)
 {
-    $tr = $db->single("SELECT SUM(a.cost) as tr from channel_push a WHERE a.channel_id = :id AND a.create_time BETWEEN :timeStart AND :timeEnd",
-        array('id' => $channelId, 'timeStart' => $timeStart, 'timeEnd' => $timeEnd)
+    $tr = $db->single("SELECT a.cost as tr from channel_push a WHERE a.channel_way_id = :id AND a.create_time BETWEEN :timeStart AND :timeEnd",
+        array('id' => $channelWayId, 'timeStart' => $timeStart, 'timeEnd' => $timeEnd)
     );
     return $tr ? $tr : 0;
 }
@@ -159,13 +159,13 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
         $ddsSum = 0;
         $cjsSum = 0;
         $cjjeSum = 0;
-        $currentQdUuid = null;
+        $currentFsUuid = null;
         ?>
         <?php foreach ($channelWays as $key => $channelWay): ?>
             <tr>
                 <td class="rowspan v-center h-center" data-name="<?= $channelWay['qd'] ?>"><?= $channelWay['qd'] ?></td>
                 <td><?= $channelWay['fs'] ?></td>
-                <td><?= $tr = getTr($db, $channelWay['qd_uuid'], $timeStart, $timeEnd) ?></td>
+                <td><?= $tr = getTr($db, $channelWay['fs_uuid'], $timeStart, $timeEnd) ?></td>
                 <td><?= $kzs = getKzs($db, $channelWay['fs_uuid'], $timeStart, $timeEnd) ?></td>
                 <td><?= $yxkzs = getYxkzs($db, $channelWay['fs_uuid'], $timeStart, $timeEnd) ?></td>
                 <td><?= $dds = getDds($db, $channelWay['fs_uuid'], $timeStart, $timeEnd) ?></td>
@@ -180,9 +180,9 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
                 <td><?= calculatePercent($cjs, $yxkzs) ?></td>
             </tr>
             <?php
-            // 成本总计渠道投入的
-            if ($currentQdUuid != $channelWay['qd_uuid']) {
-                $currentQdUuid = $channelWay['qd_uuid'];
+            // 成本总计方式投入的
+            if ($currentFsUuid != $channelWay['fs_uuid']) {
+                $currentFsUuid = $channelWay['fs_uuid'];
                 $trSum += $tr;
             }
             $kzsSum += $kzs;
