@@ -5,7 +5,7 @@ include_once __DIR__ . '/../common/header.php';
 
 date_default_timezone_set('PRC');
 
-$timeStart = isset($_GET['start-time']) ? $_GET['start-time'] : strtotime('-1 day') * 1000;
+$timeStart = isset($_GET['start-time']) ? $_GET['start-time'] : time() * 1000;
 $timeEnd = isset($_GET['end-time']) ? $_GET['end-time'] : time() * 1000;
 $timeStart = getDay0Time($timeStart);
 $timeEnd = getDay24Time($timeEnd);
