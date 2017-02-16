@@ -129,8 +129,6 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
             format: 'yyyy年mm月dd日'
         });
         $('.input-daterange .picker').on('changeDate', function (e) {
-            //console.log($(this).data('target'));
-            //console.log(e.date.getTime());
             $('input[name=' + $(this).data('target') + ']').val(e.date.getTime());
         });
     </script>
