@@ -9,6 +9,8 @@ $timeStart = isset($_GET['start-time']) ? $_GET['start-time'] : time() * 1000;
 $timeEnd = isset($_GET['end-time']) ? $_GET['end-time'] : time() * 1000;
 $timeStart = getDay0Time($timeStart);
 $timeEnd = getDay24Time($timeEnd);
+$formatTimeStart = date('Y年m月d日', $timeStart / 1000);
+$formatTimeEnd = date('Y年m月d日', $timeEnd / 1000);
 
 // 获取所有组
 function getWorkGroups($db, $companyId)
@@ -57,16 +59,18 @@ $groups = getWorkGroups($db, $companyId);
             <label>起止日期</label>
             <div class="input-daterange input-group" id="datepicker">
                 <input type="text" class="picker form-control" data-target="start-time"
-                       value="<?= date('Y年m月d日', $timeStart / 1000) ?>">
+                       value="<?= $formatTimeStart ?>">
                 <span class="input-group-addon">to</span>
                 <input type="text" class="picker form-control" data-target="end-time"
-                       value="<?= date('Y年m月d日', $timeEnd / 1000) ?>">
+                       value="<?= $formatTimeEnd ?>">
             </div>
             <input type="hidden" name="start-time" value="<?= $timeStart ?>">
             <input type="hidden" name="end-time" value="<?= $timeEnd ?>">
         </div>
         <div class="form-group col-md-12">
-            <input type="submit" class="btn btn-success" value="查询">
+            <input type="submit" class="btn btn-primary" value="查询">
+            <button class="export-excel btn btn-success" data-table="#yy-report"
+                    data-file-name="邀约报表-<?=$formatTimeStart.'-'.$formatTimeEnd?>">导出</button>
         </div>
     </form>
     <script>
@@ -83,7 +87,7 @@ $groups = getWorkGroups($db, $companyId);
         });
     </script>
 
-    <table class="table table-bordered table-responsive">
+    <table id="yy-report" class="table table-bordered table-responsive">
         <thead>
         <tr class="bg-primary">
             <th>组</th>
