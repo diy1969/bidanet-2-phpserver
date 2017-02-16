@@ -30,6 +30,17 @@
                 fileName: fileName
             });
         });
+
+        // 时间范围选择，时间转时间戳
+        $('.input-daterange').datepicker({
+            autoclose: true,
+            language: 'zh-CN',
+            minViewMode: 'days',
+            format: 'yyyy年mm月dd日'
+        });
+        $('.input-daterange .picker').on('changeDate', function (e) {
+            $('input[name=' + $(this).data('target') + ']').val(e.date.getTime());
+        });
     });
 </script>
 </div>

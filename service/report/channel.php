@@ -121,17 +121,6 @@ $channelWays = getChannelWays($db, $companyId, $channelId);
                     data-file-name="综合报表-<?=$formatTimeStart.'-'.$formatTimeEnd?>">导出</button>
         </div>
     </form>
-    <script>
-        $('.input-daterange').datepicker({
-            autoclose: true,
-            language: 'zh-CN',
-            minViewMode: 'days',
-            format: 'yyyy年mm月dd日'
-        });
-        $('.input-daterange .picker').on('changeDate', function (e) {
-            $('input[name=' + $(this).data('target') + ']').val(e.date.getTime());
-        });
-    </script>
 
     <table id="channel-report" class="table table-bordered table-responsive pinned">
         <thead>
