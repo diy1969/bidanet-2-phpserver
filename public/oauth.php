@@ -21,7 +21,7 @@ if (empty($_SESSION[$config['openidSessionKey']])) {
     exit;
 }
 $openid = $_SESSION[$config['openidSessionKey']];
-$webIndexUrl = toFullPath('/web/index.html');
+$webIndexUrl = toFullPath(HOST_WEB_FOLDER . '/index.html');
 $js = <<<JS
     window.localStorage.setItem('openid', '$openid');
     window.location.href = $webIndexUrl;
